@@ -1,2 +1,2 @@
 # Barflow-test
-Bienvenu a BARFLOW
+Test de configuration de GitHub
