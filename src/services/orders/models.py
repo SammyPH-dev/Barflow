@@ -14,6 +14,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+#test
 #defines how data is stored in your MariaDB database (SQLAlchemy ORM tables)
 
 class OrderStatus(str, enum.Enum):
