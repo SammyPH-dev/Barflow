@@ -1,0 +1,14 @@
+# web framework and server
+fastapi==0.163.2
+uvicorn
+
+# database: SQLAlchemy and the MariaDB driver
+SQLAlchemy==2.1.9
+PyMySQL
+
+# data validation
+pydantic==2.14.3
+
+# only needed to run the tests (FastAPI TestClient)
+# to remove later
+httpx2==2.16.2

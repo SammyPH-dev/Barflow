@@ -7,7 +7,6 @@ Inspired by Jason's base classes from previous project ;)
 Author: Zacchary Bedard-Chenier
 Date: 20/11/2026
 Version: 1.0
-License: Proprietary
 """
 
 from sqlalchemy.orm import DeclarativeBase

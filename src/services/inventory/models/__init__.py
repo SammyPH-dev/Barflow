@@ -6,10 +6,9 @@ This package groups the database models of the inventory service (one class per 
 Author: Zacchary Bedard-Chenier
 Date: 20/11/2026
 Version: 1.0
-License: Proprietary
 """
 
-# every model needs to be imported here before Base.metadata.create_all() in database.py
+# every model needs to be imported here before Base.metadata.create_all() in database_connection.py
 # so Python knows them and can add their tables to SQLAlchemy
 from .base import Base
 from .enums import MesureUnit, MovementType, SupplierOrderStatus

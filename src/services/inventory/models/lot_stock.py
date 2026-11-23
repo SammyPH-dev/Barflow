@@ -7,7 +7,6 @@ A lot is one received batch of one ingredient.
 Author: Zacchary Bedard-Chenier
 Date: 20/11/2026
 Version: 1.0
-License: Proprietary
 """
 
 from sqlalchemy import CheckConstraint, Column, Date, ForeignKey, Index, Integer, Numeric
