@@ -1,43 +1,43 @@
 /* The container for one drink. */
 .drink-card {
-  background-color: #1c2025;
-  border: 1px solid #343a42;
-  border-radius: 16px;
-  padding: 20px;
+    background-color: #1c2025;
+    border: 1px solid #343a42;
+    border-radius: 16px;
+    padding: 20px;
 }
 
 /* The drink's name. */
 .drink-card h2 {
-  margin: 0 0 8px;
-  color: #f4f4f1;
+    margin: 0 0 8px;
+    color: #f4f4f1;
 }
 
 /* The ingredient description. */
 .drink-card p {
-  margin: 0 0 16px;
-  color: #a3a8b1;
+    margin: 0 0 16px;
+    color: #a3a8b1;
 }
 
 /* The button that opens the details. */
 .drink-card button {
-  background-color: #343a42;
-  color: #f4f4f1;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
-  cursor: pointer;
+    background-color: #343a42;
+    color: #f4f4f1;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
 }
 
 /* Changes the button's appearance when the mouse is over it. */
 .drink-card button:hover {
-  background-color: #464e59;
+    background-color: #464e59;
 }
 
 /* Give every drink picture the same size within its card. */
 .drink-card-image {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 16px;
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 16px;
 }
