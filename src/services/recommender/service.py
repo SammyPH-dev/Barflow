@@ -2,7 +2,7 @@ from .schemas import (Recommendations, ExpiringDrink, PopularDrink)
 
 
 
-#A des fins de test seulement. Je n'ai pas encore fait une formule de recommendation avec des poids
+#A des fins de test seulement. Je n'ai pas encore fait une formule de recommendations avec des poids
 def get_recommendations() -> Recommendations:
     return Recommendations(
         expiring_drinks = [ExpiringDrink(
