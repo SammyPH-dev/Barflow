@@ -2,13 +2,23 @@ from typing import Optional
 
 from sqlalchemy import delete, select
 
-from services.orders.model import Order, OrderStatus
-from services.orders.models import OrderItem
-from services.orders.schema import OrderCreate, OrderItemCreate, OrderStatusUpdate, OrderitemUpdate
+from services.orders.model import Order, OrderItem, OrderStatus, Order
+from services.orders.schema import ApplyDiscountRequest, OrderCreate, OrderItemCreate, OrderStatusUpdate, OrderitemUpdate
 from sqlalchemy.orm import Session
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 
+MOCK_RECIPES_PRICES: dict[int, Decimal] = {
+    1: Decimal("10.00"),
+    2: Decimal("12.50")
+}
 
+MOCK_DISCOUNTS = {
+    "SAVE10": Decimal("0.10"),
+    "SAVE15": Decimal("0.15")
+}
+
+def lookup_recipe_price(recipe_id: int) -> Optional[Decimal]:
+    return MOCK_RECIPES_PRICES.get(recipe_id)
 class OrderService():
     def __init__(self) -> None:
         pass
@@ -57,13 +67,7 @@ class OrderService():
 
                 if data.tip_amount is not None:
                     order.tip_amount = data.tip_amount
-                    order.total_amount = (
-                        order.subtotal
-                        - order.discount_amount
-                        + order.tax_gst
-                        + order.tax_qst
-                        + data.tip_amount
-                    )
+                    self.recalculate_totals(db, order)
 
                 db.add(order)
                 db.commit()
@@ -78,7 +82,7 @@ class OrderService():
             return False
 
         db.delete(order)
-        db.commit
+        db.commit()
         return True
 
     def add_order_item(
@@ -95,7 +99,7 @@ class OrderService():
         created_items=[]
 
         for item_data in items:
-            unit_price=Lookup_recipe_price(item_data.recipes_id)
+            unit_price=lookup_recipe_price(item_data.recipes_id)
 
             if unit_price is None:
                 return None
@@ -132,8 +136,8 @@ class OrderService():
             return None
 
         if data.quantity is not None:
-            item.quanity = data.quantity
-            item.line_total = item.unti_price * data.quantity
+            item.quantity = data.quantity
+            item.line_total = item.unit_price * data.quantity
 
         if data.special_instructions is not None:
             item.special_instructions = data.special_instructions
@@ -144,20 +148,42 @@ class OrderService():
         db.refresh(item)
         return item
 
-    def delete_order_item(self):
-        pass
+    def delete_order_item(self, db:Session, order_item:OrderItem)->bool:
+        order=order_item.order
+        order.items.remove(order_item)
+        self.recalculate_totals(db, order)
+        db.commit()
+        return True
 
 
     # item operations
-    def apply_discount(self):
-        pass
+    def apply_discount(
+            self,
+            db:Session,
+            order:Order,
+            discount:ApplyDiscountRequest,
+    ) -> bool:
 
-    def update_tip(self):
-        pass
+        rate= MOCK_DISCOUNTS.get(discount.promo_code.strip().upper())
+        
+        if rate is None:
+            return False
 
-    def recalculate_totals(self):
+        order.discount_amount = (order.subtotal * rate).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP,
+        )
+
+        self.recalculate_totals(db, order)
+        db.commit()
+        db.refresh(order)
+        return True
+        
+
+    def recalculate_totals(self, db:Session, order:Order):
         order.subtotal = sum(
-            item.line_total for item in order.items
+            (item.line_total for item in order.items),
+            start=Decimal("0.00"),
         )
 
         order.total_amount=(

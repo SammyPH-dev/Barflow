@@ -44,9 +44,9 @@ class Order(Base):
     )
 
     discount_id: Mapped[Optional[int]] = mapped_column(
-            ForeignKey("discounts.id", ondelete="SET NULL"),
-            nullable=True,
-            index=True,
+        ForeignKey("discounts.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
     )
 
     status: Mapped[OrderStatus] = mapped_column(
