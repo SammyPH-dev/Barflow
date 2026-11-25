@@ -1,0 +1,38 @@
+/* Adds space around the recommendation page. */
+.recommendations-page {
+    padding: 32px;
+}
+
+/* Separates the recommendation sections. */
+.recommendation-section {
+    margin-top: 32px;
+}
+
+.recommendation-section h2 {
+    margin-bottom: 8px;
+}
+
+.recommendation-section > p {
+    margin-bottom: 20px;
+    color: #a3a8b1;
+}
+
+/* Arrange the cards into columns, each at most 320px wide. */
+.recommendation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 320px));
+    gap: 20px;
+    justify-content: start;
+}
+
+/* Position the sidebar and the page content side by side. */
+.recommendations-layout {
+    display: flex;
+    flex: 1;
+}
+
+/* Allow the recommendations to use the remaining width. */
+.recommendations-page {
+    flex: 1;
+    min-width: 0;
+}
