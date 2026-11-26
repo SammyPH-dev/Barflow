@@ -115,6 +115,7 @@ class Order(Base):
     items: Mapped[List[OrderItem]] = relationship(
         "OrderItem",
         back_populates = "order",
+        foreign_keys="OrderItem.order_id",
         cascade="all, delete-orphan",
         lazy="selectin",
     )
@@ -166,7 +167,9 @@ class OrderItem(Base):
 
     #Relationship
     order: Mapped[Order] = relationship(
-        "Order", back_populates="items"
+        "Order", 
+        back_populates="items",
+        foreign_keys=[order_id],
     )
 
 

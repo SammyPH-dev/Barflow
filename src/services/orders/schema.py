@@ -20,7 +20,7 @@ class OrderItemCreate(OrderItemBase):
     pass
 
 class OrderitemUpdate(BaseModel):
-    quantity: Optional[int] = Field(default=None, max_length=255)
+    quantity: Optional[int] = Field(default=None, ge=1, le=50)
     special_instructions: Optional[str] = Field(default=None, max_length=255)
 
 class OrderItemResponse(OrderItemBase):

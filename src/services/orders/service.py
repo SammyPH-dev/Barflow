@@ -19,6 +19,7 @@ MOCK_DISCOUNTS = {
 
 def lookup_recipe_price(recipe_id: int) -> Optional[Decimal]:
     return MOCK_RECIPES_PRICES.get(recipe_id)
+
 class OrderService():
     def __init__(self) -> None:
         pass
@@ -61,7 +62,7 @@ class OrderService():
                 order = db.get(Order, order_id)
 
                 if order is None:
-                    return
+                    return None
 
                 order.status=data.status
 
@@ -100,12 +101,11 @@ class OrderService():
 
         for item_data in items:
             unit_price=lookup_recipe_price(item_data.recipes_id)
-
             if unit_price is None:
                 return None
 
             item = OrderItem(
-                order_id=order_id,
+                order=order,
                 recipes_id=item_data.recipes_id,
                 quantity=item_data.quantity,
                 unit_price=unit_price,
