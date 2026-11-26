@@ -1,0 +1,12 @@
+/* Position the sidebar and the page content side by side. */
+.activity-layout {
+    display: flex;
+    flex: 1;
+}
+
+/* Adds space & allows the items to use the remaining width. */
+.activity-page {
+    padding: 32px;
+    flex: 1;
+    min-width: 0;
+}
