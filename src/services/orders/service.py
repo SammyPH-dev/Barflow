@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import delete, select
+from sqlalchemy import select
 
 from services.orders.model import Order, OrderItem, OrderStatus, Order
 from services.orders.schema import ApplyDiscountRequest, OrderCreate, OrderItemCreate, OrderStatusUpdate, OrderitemUpdate
@@ -148,7 +148,7 @@ class OrderService():
         db.refresh(item)
         return item
 
-    def delete_order_item(self, db:Session, order_item:OrderItem)->bool:
+    def remove_order_item(self, db:Session, order_item:OrderItem)->bool:
         order=order_item.order
         order.items.remove(order_item)
         self.recalculate_totals(db, order)

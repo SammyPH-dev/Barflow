@@ -196,7 +196,7 @@ def test_update_order_item_special_instructions_only():
     assert order.total_amount == Decimal("20.00")
     db.commit.assert_called_once()
 
-def test_delete_order_item():
+def test_remove_order_item():
     db=MagicMock(spec=Session)
     order = Order(
         id=1,
@@ -219,7 +219,7 @@ def test_delete_order_item():
         order=order,
     )
 
-    result = OrderService().delete_order_item(db, item)
+    result = OrderService().remove_order_item(db, item)
 
     assert result is True
     assert item not in order.items
@@ -343,8 +343,5 @@ def test_update_order_status_missing_order_returns_none():
     db.commit.assert_not_called()
     db.refresh.assert_not_called()
 
-def test_fetch_all_order():
-    db=MagicMock(spec=Session)
-    db.get_return_value=
 
 
