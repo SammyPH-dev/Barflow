@@ -5,6 +5,7 @@ import type { CartItem } from "../components/OrderCart";
 import margaritaImage from "../assets/margarita.png";
 import negroniImage from "../assets/negroni.png";
 import Sidebar from "../navigation/Sidebar";
+import type { SidebarProps } from "../navigation/Sidebar";
 import "./RecommendationsPage.css";
 
 // MockDB equivalent
@@ -41,10 +42,10 @@ const items: CartItem[] = [
 /**
  * Displays the recommendations page.
  */
-export default function RecommendationsPage() {
+export default function RecommendationsPage({ activePage, onNavigate }: SidebarProps) {
   return (
     <div className="recommendations-layout">
-      <Sidebar />
+      <Sidebar activePage={activePage} onNavigate={onNavigate} />
       <main className="recommendations-page">
         <RecommendationSection
           title="À privilégier"
