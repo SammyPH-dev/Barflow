@@ -1,5 +1,0 @@
-# lucide-react
-# npm install lucide-react
-
-# import
-# import { OrderCart } from './components/OrderCart
