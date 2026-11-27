@@ -1,11 +1,45 @@
 from decimal import Decimal
 
+import pytest
+from fastapi import HTTPException
 from services.orders.model import Order, OrderItem, OrderStatus
 from sqlalchemy.orm import Session
 from unittest.mock import MagicMock
 
 from services.orders.schema import ApplyDiscountRequest, OrderCreate, OrderItemCreate, OrderStatusUpdate, OrderitemUpdate
 from services.orders.service import OrderService, lookup_recipe_price
+
+def test_create_order_applies_promo_to_initial_items():
+    db=MagicMock(spec=Session)
+
+    order = OrderService().create_order(
+        db,
+        OrderCreate(
+            table_number="T-04",
+            promo_code=" save10 ",
+            items=[OrderItemCreate(recipes_id=1, quantity=2)],
+        ),
+    )
+
+    assert order.bartender_id is None
+    assert order.subtotal == Decimal("20.00")
+    assert order.discount_amount == Decimal("2.00")
+    assert order.total_amount == Decimal("18.00")
+    assert len(order.items) == 1
+    db.commit.assert_called_once()
+
+def test_create_order_rejects_unknown_promo_before_writing():
+    db=MagicMock(spec=Session)
+
+    with pytest.raises(HTTPException) as error:
+        OrderService().create_order(
+            db,
+            OrderCreate(promo_code="UNKNOWN"),
+        )
+
+    assert error.value.status_code == 400
+    db.add.assert_not_called()
+    db.commit.assert_not_called()
 
 def test_apply_discount_recalculates_order_total():
     db=MagicMock(spec=Session)
@@ -150,12 +184,13 @@ def test_update_order_item_on_missing_item():
     db=MagicMock(spec=Session)
     db.get.return_value = None
 
-    result = OrderService().update_order_item(
-        db,
-        order_item_id=1,
-        data=OrderitemUpdate(quantity=3),
-    )
-    assert result is None
+    with pytest.raises(HTTPException) as error:
+        OrderService().update_order_item(
+            db,
+            order_item_id=1,
+            data=OrderitemUpdate(quantity=3),
+        )
+    assert error.value.status_code == 404
     db.flush.assert_not_called()
     db.commit.assert_not_called()
 
@@ -342,6 +377,5 @@ def test_update_order_status_missing_order_returns_none():
     db.add.assert_not_called()
     db.commit.assert_not_called()
     db.refresh.assert_not_called()
-
 
 
