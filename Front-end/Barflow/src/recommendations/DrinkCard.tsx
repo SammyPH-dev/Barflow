@@ -6,7 +6,12 @@ import "./DrinkCard.css";
 /**
  * Displays a card describing one drink.
  */
-export default function DrinkCard({ name, description, imageUrl, price }: DrinkCardProps) {
+export default function DrinkCard({
+  name,
+  description,
+  imageUrl,
+  price,
+}: DrinkCardProps) {
   const [isSelected, setIsSelected] = useState(false);
 
   function openDetails() {
@@ -19,18 +24,30 @@ export default function DrinkCard({ name, description, imageUrl, price }: DrinkC
 
   return (
     <article className="drink-card">
-      <img src={imageUrl} alt={name} className="drink-card-image" />
+      {imageUrl && (
+        <img
+          className="drink-card-image"
+          src={imageUrl}
+          alt={name}
+        />
+      )}
+
       <h2>{name}</h2>
       <p>{description}</p>
-      <p>{price} $</p>
-      <button onClick={openDetails}>Voir les détails</button>
 
-      {isSelected && (
+      {price !== undefined && <p>{price} $</p>}
+
+      {imageUrl && (
+        <button type="button" onClick={openDetails}>
+          View details
+        </button>
+      )}
+      {isSelected && imageUrl && (
         <DrinkDetails
           name={name}
           description={description}
-          onClose={closeDetails}
           imageUrl={imageUrl}
+          onClose={closeDetails}
         />
       )}
     </article>

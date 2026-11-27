@@ -1,33 +1,15 @@
+import { useEffect, useState } from "react";
+import { getRecommendations } from "./recommendationsApi";
+import type { RecommendationsResponse } from "./types";
 import RecommendationSection from "./RecommendationSection";
 import DrinkCard from "./DrinkCard";
 import { OrderCart } from "../components/OrderCart";
 import type { CartItem } from "../components/OrderCart";
-import margaritaImage from "../assets/margarita.png";
-import negroniImage from "../assets/negroni.png";
 import Sidebar from "../navigation/Sidebar";
 import type { SidebarProps } from "../navigation/Sidebar";
 import "./RecommendationsPage.css";
-
-// MockDB equivalent
-const expiringDrinks = [
-  {
-    id: 1,
-    name: "Negroni",
-    description: "Gin · Campari · Vermouth rouge",
-    imageUrl: negroniImage,
-    price: 15,
-  },
-];
-
-const popularDrinks = [
-  {
-    id: 1,
-    name: "Margarita",
-    description: "Tequila blanco · citron vert · agave",
-    imageUrl: margaritaImage,
-    price: 14,
-  },
-];
+import margaritaImage from "../assets/margarita.png";
+import negroniImage from "../assets/negroni.png";
 
 const items: CartItem[] = [
     {
@@ -43,37 +25,97 @@ const items: CartItem[] = [
  * Displays the recommendations page.
  */
 export default function RecommendationsPage({ activePage, onNavigate }: SidebarProps) {
+    // Store the API response. null means no response has been loaded yet.
+  const [recommendations, setRecommendations] = useState<RecommendationsResponse | null>(null);
+
+  // Store a message if the request fails.
+  const [recommendationsError, setRecommendationsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Ignore results if this component is removed before the request finishes.
+    let ignore = false;
+
+    async function loadRecommendations() {
+      try {
+        // An empty base URL sends the request through our Vite proxy.
+        const data = await getRecommendations("");
+
+        if (!ignore) {
+          setRecommendations(data);
+        }
+      } catch {
+        if (!ignore) {
+          setRecommendationsError("Unable to load recommendations.");
+        }
+      }
+    }
+
+    loadRecommendations();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
   return (
     <div className="recommendations-layout">
       <Sidebar activePage={activePage} onNavigate={onNavigate} />
+
       <main className="recommendations-page">
+
+        {recommendationsError && (
+          <p role="alert">{recommendationsError}</p>
+        )}
+
+        {recommendations === null && recommendationsError === null && (
+          <p>Loading recommendations...</p>
+        )}
+
         <RecommendationSection
-          title="À privilégier"
-          description="Des breuvages utilisant des ingrédients proches de leur péremption."
+          title="Use Soon"
+          description="Drinks made with ingredients approaching their expiry date."
         >
-        {expiringDrinks.map((drink) => (
-          <DrinkCard
-            key={drink.id}
-            name={drink.name}
-            description={drink.description}
-            imageUrl={drink.imageUrl}
-            price={drink.price}
-          />
-        ))}      
-  </RecommendationSection>
+          {recommendations?.expiring_drinks.map((drink) => (
+            <DrinkCard
+              key={drink.recipe_id}
+              name={drink.name}
+              description={drink.reason}
+            />
+          ))}     
+        </RecommendationSection>
         <RecommendationSection
-          title="Populaires"
-          description="Les breuvages les plus commandés."
+          title="Popular"
+          description="The most frequently ordered drinks."
         >
-        {popularDrinks.map((drink) => (
+          {recommendations?.popular_drinks.map((drink) => (
+            <DrinkCard
+              key={drink.recipe_id}
+              name={drink.name}
+              description={
+                drink.quantity_ordered === null
+                  ? "Sales quantity unavailable"
+                  : `${drink.quantity_ordered} servings sold`
+              }
+            />
+          ))}
+        </RecommendationSection>
+        {/* Temporary examples showing every DrinkCard prop. */}
+        <RecommendationSection
+          title="Card Preview"
+          description="Examples with images and prices."
+        >
           <DrinkCard
-            key={drink.id}
-            name={drink.name}
-            description={drink.description}
-            imageUrl={drink.imageUrl}
-            price={drink.price}
+            name="Margarita"
+            description="Blanco tequila · triple sec · lime juice"
+            imageUrl={margaritaImage}
+            price={14}
           />
-        ))}
+
+          <DrinkCard
+            name="Negroni"
+            description="Gin · Campari · red vermouth"
+            imageUrl={negroniImage}
+            price={15}
+          />
         </RecommendationSection>
       </main>
       <OrderCart 
