@@ -1,5 +1,7 @@
 pwdlib~=0.4.2
+pwdlib[argon2]
 fastapi~=0.165.0
 PyJWT~=2.15.1
 pydantic~=2.14.4
+pydantic[email]
 uvicorn

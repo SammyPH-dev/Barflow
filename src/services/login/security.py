@@ -29,15 +29,15 @@ def create_access_token(user):
     """Create an HS256 access token for a user.
 
     Args:
-        user: The authenticated user, containing email and role attributes.
+        user: The authenticated user, containing _id and _role attributes.
 
     Returns:
         An encoded JWT string that expires after 30 minutes.
     """
     expires_at = datetime.now(timezone.utc) + timedelta(minutes=30)
     payload = {
-        "sub": user.email,
-        "role": user.role,
+        "sub": str(user._id),
+        "role": user._role.value,
         "exp": expires_at,
     }
     return jwt.encode(payload, _get_secret_key(), algorithm="HS256")

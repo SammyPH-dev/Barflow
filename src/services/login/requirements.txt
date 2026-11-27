@@ -1,0 +1,15 @@
+# web framework and server
+fastapi~=0.165.0
+uvicorn
+
+# data validation (EmailStr needs the [email] extra)
+pydantic[email]~=2.14.4
+
+# database model of the users (the MariaDB driver will be needed with the real database)
+SQLAlchemy==2.1.9
+
+# password hashing (argon2)
+pwdlib[argon2]~=0.4.2
+
+# creates and checks the access tokens (HS256)
+PyJWT~=2.15.1

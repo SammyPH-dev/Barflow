@@ -32,6 +32,7 @@ class LoginResponse(BaseModel):
     """Authentication result, authenticated user data, and access token."""
 
     authenticated: bool
+    id: int
     email: str
     name: str
     role: str
@@ -42,6 +43,7 @@ class LoginResponse(BaseModel):
 class CurrentUserResponse(BaseModel):
     """Public profile information for the authenticated user."""
 
+    id: int
     email: EmailStr
     name: str
     role: str

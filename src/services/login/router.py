@@ -18,7 +18,7 @@ from .security import create_access_token, decode_access_token
 from .service import InvalidCredentials, get_recent_users, login
 
 
-router = APIRouter(prefix="/login", tags=["login"])
+router = APIRouter(prefix="/api/v1/login", tags=["login"])
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
@@ -50,9 +50,11 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(bearer_
             headers={"WWW-Authenticate": "Bearer"},
         ) from error
 
-    email = payload.get("sub")
-    user = mock_database.get_by_email(email) if isinstance(email, str) else None
-    if user is None or payload.get("role") != user.role:
+    user_id = payload.get("sub")
+    user = None
+    if isinstance(user_id, str) and user_id.isdigit():
+        user = mock_database.get_by_id(int(user_id))
+    if user is None or payload.get("role") != user._role.value:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token.",
@@ -84,9 +86,10 @@ def login_route(request: LoginRequest):
 
     return LoginResponse(
         authenticated=True,
-        email=user.email,
-        name=f"{user.name} {user.lastname}",
-        role=user.role,
+        id=user._id,
+        email=user._email,
+        name=f"{user._name} {user._lastname}",
+        role=user._role.value,
         access_token=create_access_token(user),
     )
 
@@ -109,10 +112,11 @@ def current_user_route(user=Depends(get_current_user)):
         user: The authenticated user resolved by get_current_user.
 
     Returns:
-        A CurrentUserResponse containing email, name, and role.
+        A CurrentUserResponse containing id, email, name, and role.
     """
     return CurrentUserResponse(
-        email=user.email,
-        name=f"{user.name} {user.lastname}",
-        role=user.role,
+        id=user._id,
+        email=user._email,
+        name=f"{user._name} {user._lastname}",
+        role=user._role.value,
     )

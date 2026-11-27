@@ -19,7 +19,7 @@ Running:
 
 Server configuration:
     Host: 127.0.0.1
-    Port: 8000
+    Port: 8001
 """
 
 from fastapi import FastAPI

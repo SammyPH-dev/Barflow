@@ -32,7 +32,7 @@ def login(email, password, database=mock_database):
         raise InvalidCredentials("Email or password is incorrect.")
 
     now = datetime.now(timezone.utc)
-    user.last_connected_at = now
+    user._last_connected_at = now
     database.save(user)
     return user
 
@@ -50,9 +50,9 @@ def get_recent_users(database=mock_database):
     return RecentUsersResponse(
         recent_users=[
             RecentUser(
-                email=user.email,
-                name=f"{user.name} {user.lastname}",
-                last_connected_at=user.last_connected_at,
+                email=user._email,
+                name=f"{user._name} {user._lastname}",
+                last_connected_at=user._last_connected_at,
             )
             for user in users
         ]
