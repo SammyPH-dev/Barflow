@@ -4,7 +4,8 @@ Inventory Authorization Module
 This module checks who is making the request and what role they have.
 
 Every request reaches this service through the API Gateway. The gateway checks the JWT of the user
-(signature and expiry), then sends the headers "X-User-Id" and "X-User-Role" (EMPLOYEE or MANAGER).
+(signature and expiry), then sends the headers "X-User-Id" and "X-User-Role" (employee or manager,
+always in lowercase).
 This service trusts these headers and never checks the token itself.
 
 Author: Zacchary Bedard-Chenier
@@ -14,13 +15,13 @@ Version: 1.0
 
 from fastapi import Depends, Header, HTTPException
 
-ROLES = ('EMPLOYEE', 'MANAGER')
+from . import config
 
 
 # Permission check: FastAPI runs these before the route, if one raises an HTTPException the route never runs
 
-def user_required(x_user_id: int | None = Header(default=None),
-                  x_user_role: str | None = Header(default=None)):
+def user_required(x_user_id: int | None = Header(default=None, alias=config.USER_ID_HEADER),
+                  x_user_role: str | None = Header(default=None, alias=config.USER_ROLE_HEADER)):
     """Builds the current user from the headers sent by the API Gateway.
 
     Returns:
@@ -32,7 +33,7 @@ def user_required(x_user_id: int | None = Header(default=None),
     if x_user_id is None or x_user_role is None:
         raise HTTPException(status_code=401, detail='The user is missing or not configured properly.')
 
-    if x_user_role not in ROLES:
+    if x_user_role not in config.ROLES:
         raise HTTPException(status_code=401, detail='The role of the user is invalid.')
 
     return {'id': x_user_id, 'role': x_user_role}
@@ -45,7 +46,7 @@ def manager_required(user: dict = Depends(user_required)):
     Raises:
         HTTPException 403: If the user is not a Manager.
     """
-    if user['role'] != 'MANAGER':
+    if user['role'] != config.MANAGER_ROLE:
         raise HTTPException(status_code=403, detail='You do not have permission to access this resource.')
 
     return user
