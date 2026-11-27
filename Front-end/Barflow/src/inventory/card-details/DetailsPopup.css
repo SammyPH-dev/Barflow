@@ -1,0 +1,178 @@
+/* The popup window (same look as DrinkDetails in /recommendations). */
+.details-popup {
+    width: min(520px, calc(100vw - 32px));
+    max-height: 90vh;
+    overflow-y: auto;
+
+    padding: 0; /* so a click outside the content is a click on the background */
+    border: 1px solid #3b414a;
+    border-radius: 16px;
+
+    background: #1c2025;
+    color: #f4f4f1;
+}
+
+/* Darkens and blurs the page behind the popup. */
+.details-popup::backdrop {
+    background: rgb(0 0 0 / 60%);
+    backdrop-filter: blur(6px);
+}
+
+/* "Details" title and the badge on the right. */
+.details__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+}
+
+.details__header h3 {
+    margin: 0;
+    font-size: 15px;
+}
+
+/* "On sale" / "Low stock" */
+.details__badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #3a2f1c;
+    color: #f2b45a;
+    font-size: 12px;
+}
+
+/* The photo uses the whole width of the popup. */
+.details__image {
+    display: block;
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.details__body {
+    padding: 20px;
+}
+
+.details__name {
+    margin: 0 0 4px;
+    font-size: 20px;
+}
+
+.details__description {
+    margin: 0 0 20px;
+    font-size: 13px;
+    color: #a3a8b1;
+}
+
+/* One row per value: the label on the left, the value on the right. */
+.details__rows {
+    margin: 0;
+}
+
+.details__rows > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 6px 0;
+}
+
+/* No description under the name (ingredients): keep some space before the rows. */
+.details__name + .details__rows {
+    margin-top: 16px;
+}
+
+.details__rows dt {
+    color: #a3a8b1;
+}
+
+.details__rows dd {
+    margin: 0;
+}
+
+.details__row--discount dt,
+.details__row--discount dd {
+    color: #f2b45a;
+}
+
+/* The main value, under a separator line. */
+.details__row--total {
+    margin-top: 8px;
+    padding-top: 14px !important;
+    border-top: 1px solid #343a42;
+    font-weight: 700;
+}
+
+.details__row--total dt {
+    color: #f4f4f1;
+}
+
+.details__row--total dd {
+    font-size: 24px;
+}
+
+/* In stock, under the reorder threshold. */
+.details__row--low dd {
+    color: #f2b45a;
+}
+
+.details__note {
+    margin: 16px 0 0;
+    font-size: 12px;
+    color: #a3a8b1;
+}
+
+/* Buttons at the bottom: Close on the left, the other actions on the right. */
+.details__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.details__actions > :first-child {
+    margin-right: auto;
+}
+
+.details__button,
+.details__icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 8px;
+
+    background: #353c46;
+    color: #f4f4f1;
+    font: inherit;
+    cursor: pointer;
+}
+
+.details__icon-button {
+    width: 40px;
+    padding: 0;
+}
+
+.details__button:hover:not(:disabled),
+.details__icon-button:hover:not(:disabled) {
+    background: #464e59;
+}
+
+.details__button--discount {
+    background: #f2b45a;
+    color: #16191d;
+}
+
+.details__button img,
+.details__icon-button img {
+    width: 18px;
+    height: 18px;
+}
+
+/* Not available yet. */
+.details__button:disabled,
+.details__icon-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

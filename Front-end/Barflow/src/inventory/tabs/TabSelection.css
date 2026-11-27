@@ -19,3 +19,14 @@
     border-color: #f4f4f1;
     color: #16191d;
 }
+
+/* Number of ingredients waiting in the supplier order. */
+.tab-selection__count {
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #f2b45a;
+    color: #16191d;
+    font-size: 12px;
+    font-weight: 700;
+}
