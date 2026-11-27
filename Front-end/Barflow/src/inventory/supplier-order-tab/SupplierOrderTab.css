@@ -1,0 +1,356 @@
+/*
+ * Reorder stock tab.
+ * Same look as the order cart (components/OrderCart/OrderCart.css): the values below are copied from it,
+ * so both screens match. Nothing is imported from it: this file only styles the classes of this tab.
+ */
+
+/* Colors of the order cart, kept in one place for this tab. */
+.inventory_main.supplier-order {
+    --order-bg: #1a1d22;
+    --order-border: #27272a;
+    --order-text-muted: #a1a1aa;
+    --order-surface: #23272b;
+    --order-surface-hover: #343a43;
+    --order-accent: #f2b45a;
+    --order-text: #ffffff;
+
+    /* The panel is a column, so the totals and the button stay at the bottom.
+       Two classes, so these paddings win over the ones of .inventory_main (InventoryTab.css). */
+    display: flex;
+    flex-direction: column;
+    min-height: 70vh;
+    padding-top: 24px;
+    padding-bottom: 24px;
+}
+
+/* ---- Buttons of this tab ---- */
+.supplier-order button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    color: inherit;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.supplier-order button:focus-visible {
+    outline: 2px solid var(--order-accent);
+    outline-offset: 2px;
+}
+
+.supplier-order button:active {
+    filter: brightness(0.9);
+}
+
+.supplier-order button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ---- Title row ("Orders" and the options button) ---- */
+.supplier-order__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.supplier-order__title h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+/* ".supplier-order" in front: stronger than ".supplier-order button" above, which removes the borders. */
+.supplier-order .supplier-order__icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border: 1px solid var(--order-border);
+    border-radius: 6px;
+    background-color: var(--order-bg);
+    color: var(--order-text-muted);
+}
+
+.supplier-order__subtitle {
+    margin: 0 0 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--order-text-muted);
+}
+
+/* ---- Smart recommendations: low stock ingredients not in the order yet ---- */
+.supplier-order__suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 16px;
+    padding: 0;
+    list-style: none;
+}
+
+.supplier-order__suggestions li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 6px 6px 12px;
+    border: 1px solid var(--order-border);
+    border-radius: 10px;
+    background-color: var(--order-surface);
+    font-size: 13px;
+}
+
+.supplier-order__low {
+    color: var(--order-accent);
+}
+
+/* ---- Order card (number, date, chevron) ---- */
+.supplier-order__selector-wrapper {
+    position: relative;
+}
+
+.supplier-order .supplier-order__selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--order-border);
+    border-radius: 12px;
+    background-color: var(--order-surface);
+    text-align: left;
+    font: inherit;
+}
+
+.supplier-order .supplier-order__selector:hover {
+    background-color: var(--order-surface-hover);
+}
+
+.supplier-order__selector-icon {
+    display: flex;
+    margin-right: 10px;
+    padding: 8px;
+    border: 1px solid var(--order-border);
+    border-radius: 8px;
+    background-color: var(--order-bg);
+}
+
+.supplier-order__selector-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.supplier-order__selector-info strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--order-text);
+}
+
+.supplier-order__selector-info span {
+    font-size: 12px;
+    color: var(--order-text-muted);
+}
+
+.supplier-order__chevron {
+    color: var(--order-text-muted);
+}
+
+/* The chevron points to the side when the order is closed. */
+.supplier-order__chevron--closed {
+    transform: rotate(-90deg);
+}
+
+.supplier-order__confirmation {
+    margin: 12px 0 0;
+    font-size: 13px;
+    color: var(--order-accent);
+}
+
+/* ---- Lines of the order ---- */
+.supplier-order__empty {
+    margin: 16px 0;
+    font-size: 12px;
+    color: var(--order-text-muted);
+}
+
+.supplier-order__lines {
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.supplier-order__line {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--order-border);
+}
+
+.supplier-order__line:first-child {
+    padding-top: 4px;
+}
+
+.supplier-order__line-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.supplier-order__line-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+/* Quantity stepper: - 2 + */
+.supplier-order__stepper {
+    display: flex;
+    align-items: center;
+    width: 96px;
+    overflow: hidden;
+    border: 1px solid var(--order-border);
+    border-radius: 8px;
+    background-color: var(--order-surface);
+}
+
+.supplier-order__stepper button,
+.supplier-order__stepper span {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 6px 10px;
+    background-color: var(--order-bg);
+    color: var(--order-text-muted);
+}
+
+.supplier-order__stepper button:hover {
+    background-color: var(--order-surface-hover);
+    color: var(--order-text);
+}
+
+.supplier-order__stepper span {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.supplier-order__unit-price {
+    font-size: 12px;
+    color: var(--order-text-muted);
+}
+
+/* ---- Small square "+" buttons (suggestions and "add an ingredient") ---- */
+.supplier-order__small-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background-color: #353c46;
+}
+
+.supplier-order__small-btn:hover {
+    background-color: var(--order-surface-hover);
+}
+
+.supplier-order__add {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.supplier-order__select {
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--order-border);
+    border-radius: 8px;
+    background-color: var(--order-surface);
+    color: var(--order-text);
+    font: inherit;
+    font-size: 13px;
+}
+
+/* ---- Totals, pushed to the bottom of the panel ---- */
+.supplier-order__totals {
+    margin-top: auto;
+    padding: 14px 0 16px;
+    border-top: 1px solid var(--order-border);
+}
+
+.supplier-order__total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--order-text-muted);
+}
+
+.supplier-order__total-row span:last-child {
+    font-weight: 500;
+    color: var(--order-text);
+}
+
+.supplier-order__grand-total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--order-border);
+}
+
+.supplier-order__grand-total strong:first-child {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.supplier-order__grand-total strong:last-child {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* ---- Yellow "Order" buttons ---- */
+.supplier-order .supplier-order__order-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background-color: var(--order-accent);
+    color: #18181a;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.supplier-order .supplier-order__order-btn:hover:not(:disabled) {
+    background-color: #f8cc7a;
+}
+
+.supplier-order__order-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* "Order" on one line: not full width. */
+.supplier-order__order-btn--line {
+    gap: 16px;
+    min-width: 170px;
+}
+
+/* "Order all the ingredients": full width. */
+.supplier-order__order-btn--all {
+    width: 100%;
+    margin-top: 8px;
+}

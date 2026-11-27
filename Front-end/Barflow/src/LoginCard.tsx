@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import './LoginCard.css'
 
-export default function LoginCard() {
+type LoginCardProps = {
+  onConnect: () => void
+}
+
+export default function LoginCard({ onConnect }: LoginCardProps) {
   const [showPassword, setShowPassword] = useState(false)
 
   return (
@@ -43,7 +47,8 @@ export default function LoginCard() {
           remember me
         </label>
 
-        <button className="login-form__submit" type="button">
+        {/* Temporary navigation callback; replace with successful-login handling later. */}
+        <button className="login-form__submit" type="button" onClick={onConnect}>
           connect
           <svg aria-hidden="true" viewBox="0 0 24 24">
             <path d="M4 12h15m-6-6 6 6-6 6" />

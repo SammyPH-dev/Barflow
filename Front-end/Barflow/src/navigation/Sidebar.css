@@ -1,0 +1,43 @@
+/* Arrange the navigation buttons vertically. */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 110px;
+    flex-shrink: 0;
+    padding: 16px 12px;
+    background-color: #16191d;
+    border-right: 1px solid #343a42;
+}
+
+/* Style each navigation button. */
+.sidebar button {
+    padding: 16px 8px;
+    background-color: transparent;
+    color: #a3a8b1;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    /* Place the icon above the label and center both. */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar button:hover {
+    background-color: #252a30;
+    color: white;
+}
+
+/* Keep the clicked navigation item highlighted in gold. */
+.sidebar button.sidebar-active {
+    background-color: #252a30;
+    color: #16191d;
+}
+
+/* Give navigation icons a consistent size. */
+.sidebar-icon {
+    width: 24px;
+    height: 24px;
+}

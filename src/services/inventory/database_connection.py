@@ -17,6 +17,7 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from . import config
 from .default_ingredients import default_ingredients_if_db_empty
 from .models import Base
 
@@ -31,7 +32,7 @@ def get_session():
 
     if SessionLocal is None:
         # pool_pre_ping checks that the connection is still alive before using it
-        engine = create_engine(os.environ['DATABASE_URL'], pool_pre_ping=True)
+        engine = create_engine(os.environ[config.DATABASE_URL_VARIABLE], pool_pre_ping=True)
         SessionLocal = sessionmaker(engine, expire_on_commit=False)
 
         # Creates the database tables if they do not exist

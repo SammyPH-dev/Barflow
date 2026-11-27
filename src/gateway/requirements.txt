@@ -1,0 +1,10 @@
+# web framework and server
+fastapi
+uvicorn
+
+# HTTP client used to forward the requests to the services
+# (FastAPI's TestClient, used by the tests, needs it too)
+httpx
+
+# checks the tokens signed by the login service
+PyJWT

@@ -6,7 +6,7 @@ All routes start with `/api/v1/inventory`. All bodies and responses are JSON.
 
 **Headers (sent by the API Gateway):**
 - `X-User-Id` (int): id of the user making the request.
-- `X-User-Role` (`EMPLOYEE` or `MANAGER`): role of the user.
+- `X-User-Role` (`employee` or `manager`, always in lowercase): role of the user.
 
 **Formats:**
 - Quantities are strings with 3 decimals (`"750.000"`), in the unit of the ingredient (`ml`, `g` or `unit`).
@@ -19,7 +19,9 @@ All routes start with `/api/v1/inventory`. All bodies and responses are JSON.
 - `404`: unknown ingredient, lot or supplier order.
 - `409`: operation not allowed (name already used, stock would become negative, returning more than was taken).
 - `422`: invalid data (wrong type, missing field, value out of range).
-- Error body: `{"error": "message"}`. A `500` also has a `details` field.
+- Error body: `{"detail": "message"}`, the same format as FastAPI and the API Gateway.
+  For a `422` sent by FastAPI itself, `detail` is a list of the invalid fields, not a string.
+- A `500` only says what the service was doing; the cause is written in the service's log.
 
 ---
 
@@ -134,3 +136,8 @@ Every change made to the stock, newest first.
   - `limit`: 1 to 500, default 100.
 - **Output `200`:** `{"movements": [{"id", "lot_stock_id", "type", "quantity_change", "order_id", "reason", "user_id", "created_at"}]}`
   - `quantity_change`: negative = the stock went down, positive = it went up.
+
+## Settings
+
+Values that depend on team decisions (route prefix, header names, role values, name of the database
+variable, port) are in `config.py`. Change them there only.
