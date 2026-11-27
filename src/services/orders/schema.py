@@ -48,7 +48,7 @@ class ApplyDiscountRequest(BaseModel):
 class OrderResponse(BaseModel):
     id:int
     table_number: Optional[str]
-    bartender_id:int
+    bartender_id:Optional[int]
     discount_id: Optional[int]
     status: OrderStatus
 

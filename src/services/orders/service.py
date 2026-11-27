@@ -1,5 +1,6 @@
 from typing import Optional
 
+from fastapi import HTTPException
 from sqlalchemy import select
 
 from services.orders.model import Order, OrderItem, OrderStatus, Order
@@ -25,11 +26,28 @@ class OrderService():
         pass
 
     # crud operations
-    def create_order(self, db: Session, data: OrderCreate) -> Order:
+    def create_order(self, db: Session, data: OrderCreate) -> Optional[Order]:
         if data is None:
-            return
+            return None
+
+        promo_code = data.promo_code.strip().upper() if data.promo_code else None
+        if data.promo_code is not None and (
+            not promo_code or promo_code not in MOCK_DISCOUNTS
+        ):
+            raise HTTPException(status_code=400, detail="Invalid promo code")
+
+        priced_items = []
+        for item_data in data.items:
+            unit_price = lookup_recipe_price(item_data.recipes_id)
+            if unit_price is None:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Recipe {item_data.recipes_id} not found",
+                )
+            priced_items.append((item_data, unit_price))
         
         order = Order(
+            bartender_id=None,
             table_number=data.table_number,
             status=OrderStatus.OPEN,
             subtotal=Decimal("0.00"),
@@ -42,8 +60,30 @@ class OrderService():
         )
 
         db.add(order)
-        db.commit()
-        db.refresh(order)
+        db.flush()
+
+        for item_data, unit_price in priced_items:
+            db.add(
+                OrderItem(
+                    order=order,
+                    recipes_id=item_data.recipes_id,
+                    quantity=item_data.quantity,
+                    unit_price=unit_price,
+                    line_total=unit_price * item_data.quantity,
+                    special_instructions=item_data.special_instructions,
+                )
+            )
+
+        self.recalculate_totals(db, order)
+        if promo_code:
+            self.apply_discount(
+                db,
+                order,
+                ApplyDiscountRequest(promo_code=promo_code),
+            )
+        else:
+            db.commit()
+            db.refresh(order)
 
         return order
 
@@ -133,7 +173,7 @@ class OrderService():
     ) -> Optional[OrderItem]:
         item=db.get(OrderItem, order_item_id)
         if item is None:
-            return None
+            raise HTTPException(status_code=404, detail="Order item not found")
 
         if data.quantity is not None:
             item.quantity = data.quantity

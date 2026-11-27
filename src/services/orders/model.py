@@ -44,7 +44,7 @@ class Order(Base):
     )
 
     discount_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("discounts.id", ondelete="SET NULL"),
+        Integer,
         nullable=True,
         index=True,
     )
@@ -137,8 +137,7 @@ class OrderItem(Base):
     )
 
     recipes_id: Mapped[int] = mapped_column(
-        ForeignKey("orders.id",
-        ondelete="RESTRICT"),
+        Integer,
         nullable=False, index=True
     )
 
@@ -160,7 +159,7 @@ class OrderItem(Base):
 
     special_instructions: Mapped[Optional[str]] = mapped_column(
         String(255),
-        nullable=False
+        nullable=True
     )
 
 
