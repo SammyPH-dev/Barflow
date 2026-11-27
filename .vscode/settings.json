@@ -1,0 +1,18 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "mysql-barflow.alwaysdata.net",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "Barflow_db",
+            "database": "barflow_db",
+            "username": "barflow_app"
+        }
+    ]
+}

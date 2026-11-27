@@ -1,0 +1,55 @@
+services:
+  inventory:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - uvicorn
+      - services.inventory.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8002"
+    environment:
+      DATABASE_URL: "${DATABASE_URL:?Set DATABASE_URL in the root .env file}"
+    ports:
+      - "8002:8002"
+
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - uvicorn
+      - gateway.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+    environment:
+      LOGIN_SERVICE_URL: "http://login:8001"
+      INVENTORY_SERVICE_URL: "http://inventory:8002"
+      JWT_SECRET_KEY: "${JWT_SECRET_KEY:?Set JWT_SECRET_KEY in the root .env file}"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - inventory
+      - login
+  
+  login:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - uvicorn
+      - services.login.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8001"
+    environment:
+      JWT_SECRET_KEY: "${JWT_SECRET_KEY:?Set JWT_SECRET_KEY in the root .env file}"
+    ports:
+      - "8001:8001"
+
+

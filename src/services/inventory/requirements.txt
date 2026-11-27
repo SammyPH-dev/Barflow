@@ -12,3 +12,5 @@ pydantic==2.14.3
 # only needed to run the tests (FastAPI TestClient)
 # to remove later
 httpx2==2.16.2
+python-dotenv
+
