@@ -81,7 +81,7 @@ class MockDatabase:
 mock_database = MockDatabase()
 
 sammy = Manager(
-    "Sam P.-H."
+    "Sam P.-H.",
     "Sammy",
     "Panthaleon-Hernandez",
     "1234",
@@ -90,7 +90,7 @@ sammy = Manager(
     None
 )
 bruno = Employee(
-    "Bruno M."
+    "Bruno M.",
     "Bruno",
     "Mcnicoll",
     "1234",

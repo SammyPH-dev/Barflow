@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { login } from './services/auth' 
+import { login } from '../../services/auth' 
 import './LoginCard.css'
 
 type LoginCardProps = {
