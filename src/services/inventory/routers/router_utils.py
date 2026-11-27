@@ -8,11 +8,14 @@ Date: 20/11/2026
 Version: 1.0
 """
 
+import logging
 from decimal import Decimal
 
 from fastapi.responses import JSONResponse
 
 from ..services.errors import InvalidOperationError, InventoryError, NotFoundError
+
+logger = logging.getLogger(__name__)
 
 QUANTITY_PLACES = Decimal('0.001') # quantities: 3 digits after the dot (ml / g / units)
 MONEY_PLACES = Decimal('0.01') # money: 2 digits after the dot
@@ -37,16 +40,15 @@ def error_response(session, e, action):
     # NotFoundError and InvalidOperationError
     # are special cases of InventoryError, so they are checked first
     if isinstance(e, NotFoundError):
-        return JSONResponse({'error': str(e)}, status_code=404)
+        return JSONResponse({'detail': str(e)}, status_code=404)
     if isinstance(e, InvalidOperationError):
-        return JSONResponse({'error': str(e)}, status_code=409)
+        return JSONResponse({'detail': str(e)}, status_code=409)
     if isinstance(e, InventoryError):
-        return JSONResponse({'error': str(e)}, status_code=400)
+        return JSONResponse({'detail': str(e)}, status_code=400)
 
-    return JSONResponse({
-        'error': f'An error occurred while {action}.',
-        'details': str(e)
-    }, status_code=500)
+    # The cause goes to the service's log, not to the client: it can reveal how the service works inside.
+    logger.exception('Error while %s', action)
+    return JSONResponse({'detail': f'An error occurred while {action}.'}, status_code=500)
 
 
 # decimals are sent as text (ex: "750.000") for easier manipulation and sending as JSON

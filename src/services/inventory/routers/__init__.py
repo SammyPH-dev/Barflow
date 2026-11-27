@@ -11,9 +11,10 @@ Version: 1.0
 
 from fastapi import APIRouter
 
+from .. import config
 from . import adjustment_router, ingredient_router, movement_router, restock_router, stock_router
 
-router = APIRouter(prefix='/api/v1/inventory')
+router = APIRouter(prefix=config.API_PREFIX)
 
 router.include_router(stock_router.router)
 router.include_router(adjustment_router.router)

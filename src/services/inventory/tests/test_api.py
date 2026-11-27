@@ -27,8 +27,8 @@ from services.inventory.routers import router
 warnings.simplefilter('ignore', SAWarning)
 
 URL = '/api/v1/inventory'
-MANAGER = {'X-User-Id': '1', 'X-User-Role': 'MANAGER'}
-EMPLOYEE = {'X-User-Id': '2', 'X-User-Role': 'EMPLOYEE'}
+MANAGER = {'X-User-Id': '1', 'X-User-Role': 'manager'}
+EMPLOYEE = {'X-User-Id': '2', 'X-User-Role': 'employee'}
 
 
 class ApiTests(unittest.TestCase):
@@ -68,6 +68,9 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(self.client.get(f'{URL}/stock').status_code, 401)
         bad_role = {'X-User-Id': '1', 'X-User-Role': 'X'}
         self.assertEqual(self.client.get(f'{URL}/stock', headers=bad_role).status_code, 401)
+        # the API Gateway always sends the role in lowercase
+        uppercase = {'X-User-Id': '1', 'X-User-Role': 'MANAGER'}
+        self.assertEqual(self.client.get(f'{URL}/stock', headers=uppercase).status_code, 401)
 
     def test_employee_cannot_use_manager_endpoints(self):
         for method, url, body in [
@@ -129,7 +132,7 @@ class ApiTests(unittest.TestCase):
         loss = self.client.post(f'{URL}/adjustments', headers=MANAGER,
                                 json={'lot_stock_id': 1, 'quantity_change': '-11', 'reason': 'x'})
         self.assertEqual(loss.status_code, 409)  # more than the lot holds
-        self.assertIn('error', loss.json())
+        self.assertEqual(list(loss.json()), ['detail'])  # {"detail": "message"} only
         duplicate = self.client.post(f'{URL}/ingredients', headers=MANAGER,
                                      json={'name': 'Vodka', 'mesure_unit': 'ml'})
         self.assertEqual(duplicate.status_code, 409)
