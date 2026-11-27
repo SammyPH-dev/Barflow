@@ -62,7 +62,7 @@ async def get_recommendations() -> Recommendations:
     """Calculate both lists using one inventory response."""
 
     stocks = await get_inventory_stock(
-        "http://localhost:8002", 1, "EMPLOYEE"
+        "http://localhost:8002", 1, "employee"
     )
 
     expiring_drinks = await get_expiring_recipe_recommendations(stocks)
