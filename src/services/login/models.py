@@ -27,7 +27,8 @@ class User:
         ValueError: If password is not a non-empty string.
     """
 
-    def __init__(self, name, lastName, password, empNumber, email, last_connected_at):
+    def __init__(self,username, name, lastName, password, empNumber, email, last_connected_at):
+        self.username = username
         self.name = name
         self.lastname = lastName
         if not isinstance(password, str) or not password:
@@ -55,14 +56,14 @@ class User:
 class Manager(User):
     """Represent a Barflow user with the manager role."""
 
-    def __init__(self, name, lastName, password, empNumber, email, last_connected_at):
-        super().__init__(name, lastName, password, empNumber, email, last_connected_at)
+    def __init__(self,username, name, lastName, password, empNumber, email, last_connected_at):
+        super().__init__(username,name, lastName, password, empNumber, email, last_connected_at)
         self.role = "Manager"
 
 
 class Employee(User):
     """Represent a Barflow user with the employee role."""
 
-    def __init__(self, name, lastName, password, empNumber, email, last_connected_at):
-        super().__init__(name, lastName, password, empNumber, email, last_connected_at)
+    def __init__(self,username, name, lastName, password, empNumber, email, last_connected_at):
+        super().__init__(username,name, lastName, password, empNumber, email, last_connected_at)
         self.role = "Employee"

@@ -13,8 +13,11 @@ import './App.css'
 export default function App() {
   // Temporary screen navigation only; this is not authentication.
   // While building, you can start with useState(true) to skip the login screen.
-  const [isConnected, setIsConnected] = useState(false)
+  const [accessToken, setAccessToken] = useState<string | null>(null)
+  const isConnected = accessToken !== null
   const [page, setPage] = useState<SidebarPage>('Sales')
+  const [username, setUsername] = useState('Alex L.')
+
 
   // Picks the page to show. Every page gets the current page and the function to change it,
   // and passes them to its own Sidebar.
@@ -42,8 +45,12 @@ export default function App() {
         renderPage()
       ) : (
         <main className="app-main">
-          <ProfileSelection />
-          <LoginCard onConnect={() => setIsConnected(true)} />
+          <ProfileSelection onSelectProfile={setUsername} />
+          <LoginCard 
+            username={username}
+            onUsernameChange={setUsername}
+            onConnect={setAccessToken} 
+          />
         </main>
       )}
     </div>
