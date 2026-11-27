@@ -1,12 +1,32 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
+import { login } from '../../services/auth' 
 import './LoginCard.css'
 
 type LoginCardProps = {
-  onConnect: () => void
+  username: string
+  onUsernameChange: (newUsername: string) => void
+  onConnect: (accessToken: string) => void
 }
 
-export default function LoginCard({ onConnect }: LoginCardProps) {
+export default function LoginCard({ 
+    username,
+    onUsernameChange,
+    onConnect 
+  }: LoginCardProps) {
+  const [errorMessage, setErrorMessage] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [password, setPassword] = useState('')
+
+ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    try{
+      const result = await login(username, password)
+      onConnect(result.access_token)
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Login failed')
+    }
+  }
 
   return (
     <section className="login-card" aria-labelledby="login-title">
@@ -15,11 +35,15 @@ export default function LoginCard({ onConnect }: LoginCardProps) {
         <p>Enter your credentials to log in.</p>
       </header>
 
-      <div className="login-form">
+      <form className="login-form" onSubmit={handleSubmit}>
         <div className="login-form__field">
-          <label htmlFor="login-username">Username</label>
+          <label htmlFor="login-username">Email</label>
           {/* htmlfor is the same as the for in html to link the label to the input field */}
-          <input id="login-username" placeholder="Your username" />
+          <input id="login-username"
+          value={username}
+          onChange={(e) => onUsernameChange(e.target.value)}
+          placeholder="Your email"
+          required />
         </div>
 
         <div className="login-form__field">
@@ -29,6 +53,9 @@ export default function LoginCard({ onConnect }: LoginCardProps) {
               id="login-password"
               placeholder="Your password"
               type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
             <button
               aria-label={showPassword ? 'Hide password' : 'Show password'}
@@ -41,23 +68,18 @@ export default function LoginCard({ onConnect }: LoginCardProps) {
             </button>
           </div>
         </div>
-
-        <label className="login-form__remember">
-          <input type="checkbox" defaultChecked />
-          remember me
-        </label>
-
-        {/* Temporary navigation callback; replace with successful-login handling later. */}
-        <button className="login-form__submit" type="button" onClick={onConnect}>
+          {errorMessage && <p role="alert">{errorMessage}</p>}
+        <button className="login-form__submit" type="submit">
           connect
           <svg aria-hidden="true" viewBox="0 0 24 24">
             <path d="M4 12h15m-6-6 6 6-6 6" />
           </svg>
         </button>
-      </div>
+        
+      </form>
 
       <p className="login-card__help">
-        Forgot your password? <a href="mailto:responsable@barflow.fr">Contact your manager</a>
+        Forgot your password? <a href="mailto:responsable@barflow.fr">Click here to reset it</a>
       </p>
     </section>
   )

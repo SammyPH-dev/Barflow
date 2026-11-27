@@ -25,11 +25,18 @@ Server configuration:
 from fastapi import FastAPI
 import uvicorn
 
-from .router import router
-
+from src.services.login.router import router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Barflow Login Service")
-app.include_router(router, prefix="/api/v1")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_methods=["POST"],
+    allow_headers=["Content-Type"],
+)
+app.include_router(router)
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
