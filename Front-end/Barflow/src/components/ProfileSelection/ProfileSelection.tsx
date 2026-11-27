@@ -8,7 +8,11 @@ const profiles = [
   { initials: 'TK', name: 'Taylor K.', role: 'Manager' },
 ]
 
-export default function ProfileSelection() {
+type ProfileSelectionProps = {
+  onSelectProfile: (profileName: string) => void
+}
+
+export default function ProfileSelection({ onSelectProfile }: ProfileSelectionProps) {
   const [selectedProfile, setSelectedProfile] = useState('Alex L.')
 
   return (
@@ -39,7 +43,10 @@ export default function ProfileSelection() {
               aria-checked={selectedProfile === profile.name}
               className={`profile-selection__card${selectedProfile === profile.name ? ' profile-selection__card--selected' : ''}`}
               key={profile.name}
-              onClick={() => setSelectedProfile(profile.name)}
+              onClick={() => {
+                setSelectedProfile(profile.name)
+                onSelectProfile(profile.name)
+              }}
             >
               <span
                 className={`profile-selection__avatar${selectedProfile === profile.name ? ' profile-selection__avatar--selected' : ''}`}
