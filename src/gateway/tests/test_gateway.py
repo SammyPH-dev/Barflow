@@ -13,10 +13,13 @@ Version: 1.0
 import json
 import unittest
 from datetime import datetime, timedelta, timezone
+from unittest.mock import patch
 
 import httpx
 import jwt
 from fastapi.testclient import TestClient
+from services.login.repository import mock_database
+from services.login.security import create_access_token
 
 SECRET = 'a-test-secret-that-is-at-least-32-characters-long'
 from gateway import config, main  # noqa: E402
@@ -57,14 +60,10 @@ class GatewayTests(unittest.TestCase):
 
     # ---- routing ----
 
-    def test_each_service_is_reached_on_its_own_port(self):
-        expected = {
-            'login': 8001, 'inventory': 8002, 'orders': 8003,
-            'recipes': 8004, 'recommendations': 8005, 'discounts': 8006,
-        }
-        for service, port in expected.items():
+    def test_each_service_uses_its_configured_url(self):
+        for service, base_url in config.SERVICES.items():
             self.client.get(f'/api/v1/{service}/something', headers=bearer(make_token()))
-            self.assertEqual(str(self.calls[-1].url), f'http://127.0.0.1:{port}/api/v1/{service}/something')
+            self.assertEqual(str(self.calls[-1].url), f'{base_url}/api/v1/{service}/something')
 
     def test_unknown_service(self):
         response = self.client.get('/api/v1/nothing/here', headers=bearer(make_token()))
@@ -107,6 +106,16 @@ class GatewayTests(unittest.TestCase):
         self.assertEqual(sent['x-user-id'], '7')
         self.assertEqual(sent['x-user-role'], 'employee')
 
+    def test_login_token_is_accepted_by_gateway(self):
+        user = mock_database.get_by_email('sammy@barflow.com')
+        with patch.dict('os.environ', {'JWT_SECRET_KEY': SECRET}):
+            token = create_access_token(user)
+
+        response = self.client.get('/api/v1/inventory/stock', headers=bearer(token))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.calls[0].headers['x-user-id'], str(user.user_id))
+        self.assertEqual(self.calls[0].headers['x-user-role'], 'manager')
+
     def test_role_is_lowercase(self):
         for role in ('Manager', 'MANAGER', 'manager'):
             self.client.get('/api/v1/inventory/stock', headers=bearer(make_token(role=role)))
@@ -121,7 +130,7 @@ class GatewayTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {'access_token': 'abc', 'user_id': 7})
         sent = self.calls[0]
-        self.assertEqual(str(sent.url), 'http://127.0.0.1:8001/api/v1/login')
+        self.assertEqual(str(sent.url), f"{config.SERVICES['login']}/api/v1/login")
         self.assertNotIn('x-user-id', sent.headers)
         self.assertNotIn('x-user-role', sent.headers)
 
@@ -145,7 +154,10 @@ class GatewayTests(unittest.TestCase):
         self.assertEqual(response.json(), {'detail': 'The lot would become negative.'})
         sent = self.calls[0]
         self.assertEqual(sent.method, 'POST')
-        self.assertEqual(str(sent.url), 'http://127.0.0.1:8002/api/v1/inventory/adjustments?dry=1&dry=2')
+        self.assertEqual(
+            str(sent.url),
+            f"{config.SERVICES['inventory']}/api/v1/inventory/adjustments?dry=1&dry=2",
+        )
         self.assertEqual(json.loads(sent.content), body)
         self.assertEqual(sent.headers['content-type'], 'application/json')
         self.assertEqual(sent.headers['authorization'], f'Bearer {token}')

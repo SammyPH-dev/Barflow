@@ -38,7 +38,7 @@ def stock_level_json(level):
 # get_all_stock()
 @router.get('/stock')
 def get_all_stock(session: Session = Depends(get_session),
-                  user: dict = Depends(user_required)):
+                user: dict = Depends(user_required)):
     """Retrieve the usable stock of every ingredient.
 
     Any logged-in user. The recommendation service reads it too.
@@ -55,8 +55,8 @@ def get_all_stock(session: Session = Depends(get_session),
 # get_stock(ingredient_id)
 @router.get('/stock/{ingredient_id}')
 def get_stock(ingredient_id: int,
-              session: Session = Depends(get_session),
-              user: dict = Depends(user_required)):
+            session: Session = Depends(get_session),
+            user: dict = Depends(user_required)):
     """Retrieve the usable stock of one ingredient.
 
     Args:
@@ -76,7 +76,7 @@ def get_stock(ingredient_id: int,
 # get_all_alerts()
 @router.get('/alerts')
 def get_all_alerts(session: Session = Depends(get_session),
-                   manager: dict = Depends(manager_required)):
+                manager: dict = Depends(manager_required)):
     """Retrieve every ingredient whose usable stock is below its reorder threshold.
 
     Manager only.
@@ -96,17 +96,17 @@ def get_all_alerts(session: Session = Depends(get_session),
 # deduct_stock()
 @router.post('/deductions')
 def deduct_stock(data: DeductionDbSchema,
-                 session: Session = Depends(get_session),
-                 user: dict = Depends(user_required)):
+                session: Session = Depends(get_session),
+                user: dict = Depends(user_required)):
     """Deduct the ingredients of an item added to a client order (+ on the POS),
-       all ingredients from that item (recipe) or nothing.
+    all ingredients from that item (recipe) or nothing.
 
     Args:
         None. The deduction is obtained from the JSON request body containing:
             - order_id (int): The id of the client order in the order service.
             - button_press_id (str): Unique id of this + press (offline POS can resend it).
             - items (list): Each ingredient_id (int) of the item's recipe with its quantity
-              (decimal, liquids in ml).
+            (decimal, liquids in ml).
 
     Returns:
         A JSON object (order_id, success, shortages, alerts) and HTTP 200 (OK).
@@ -140,8 +140,8 @@ def deduct_stock(data: DeductionDbSchema,
 # return_stock()
 @router.post('/returns')
 def return_stock(data: ReturnDbSchema,
-                 session: Session = Depends(get_session),
-                 user: dict = Depends(user_required)):
+                session: Session = Depends(get_session),
+                user: dict = Depends(user_required)):
     """Give back the ingredients of an item removed from a client order (- on the POS).
 
     The quantities go back to the same lots they were taken from.

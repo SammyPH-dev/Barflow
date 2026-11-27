@@ -38,7 +38,7 @@ def read_user(authorization):
 
     Raises:
         AuthError: If the token is missing, badly signed, expired, or does not contain
-        a numeric user id ("sub") and a known role ("role").
+        a numeric user id ("user_id", or legacy numeric "sub") and a known role ("role").
     """
     if not authorization:
         raise AuthError('Bearer token required.')
@@ -62,9 +62,9 @@ def read_user(authorization):
     except InvalidTokenError:
         raise AuthError('Invalid token.')
 
-    # The user id ("sub") must be a string of digits (ex: "7"),
-    # because the services read X-User-Id as a whole number
-    user_id = payload['sub']
+    # Login tokens use the email as "sub" and carry the numeric service id separately.
+    # Keep accepting numeric "sub" values for compatibility with existing tokens.
+    user_id = payload.get('user_id', payload['sub'])
     if not isinstance(user_id, str):
         raise AuthError('Invalid token.')
     if not user_id.isascii():  # isdigit() also accepts digits from other alphabets
